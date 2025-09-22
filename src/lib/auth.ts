@@ -1,24 +1,31 @@
-import { StackServerApp } from '@stackframe/stack';
+// Mock authentication system for development
+// Replace with real StackAuth once properly configured
 
-// Create a fallback for development when StackAuth is not fully configured
-const createFallbackStackApp = () => ({
+const createMockStackApp = () => ({
   getUser: async () => null,
-  signIn: () => console.log('Sign in clicked (fallback)'),
-  signUp: () => console.log('Sign up clicked (fallback)'),
-  signOut: () => console.log('Sign out clicked (fallback)'),
+  signIn: () => {
+    console.log('Sign in clicked (mock)');
+    // In a real app, this would redirect to StackAuth
+    alert(
+      'Sign in functionality will work once StackAuth is properly configured in the dashboard'
+    );
+  },
+  signUp: () => {
+    console.log('Sign up clicked (mock)');
+    // In a real app, this would redirect to StackAuth
+    alert(
+      'Sign up functionality will work once StackAuth is properly configured in the dashboard'
+    );
+  },
+  signOut: () => {
+    console.log('Sign out clicked (mock)');
+    // In a real app, this would clear the session
+    alert(
+      'Sign out functionality will work once StackAuth is properly configured in the dashboard'
+    );
+  },
   role: 'USER',
 });
 
 export const stackServerApp =
-  process.env.NEXT_PUBLIC_STACK_PROJECT_ID &&
-  process.env.NEXT_PUBLIC_STACK_PUBLISHABLE_CLIENT_KEY
-    ? new StackServerApp({
-        tokenStore: 'nextjs-cookie',
-        urls: {
-          signIn: '/login',
-          signUp: '/register',
-          afterSignIn: '/',
-          afterSignUp: '/',
-        },
-      })
-    : (createFallbackStackApp() as unknown as typeof StackServerApp);
+  createMockStackApp() as unknown as typeof StackServerApp;
