@@ -1,10 +1,8 @@
 // Neon Auth configuration
 // This will be used instead of StackAuth
 
-import { neon } from '@neondatabase/serverless';
-
-// Initialize Neon client
-export const neonClient = neon(process.env.DATABASE_URL!);
+// Note: We'll use Prisma for database operations instead of direct Neon client
+// This avoids client-side database connection issues
 
 // Simple auth utilities for Neon Auth
 export interface User {
@@ -26,9 +24,14 @@ const mockUser: User = {
 
 // Simple auth functions
 export const getCurrentUser = async (): Promise<User | null> => {
-  // For now, return mock user
-  // In production, this would check session/token
-  return mockUser;
+  // Check localStorage for stored user
+  if (typeof window !== 'undefined') {
+    const storedUser = localStorage.getItem('rumered-user');
+    if (storedUser) {
+      return JSON.parse(storedUser);
+    }
+  }
+  return null;
 };
 
 export const signIn = async (
@@ -37,7 +40,21 @@ export const signIn = async (
 ): Promise<User | null> => {
   // Mock sign in - in production, this would validate credentials
   console.log('Sign in with:', email);
-  return mockUser;
+
+  // Create user and store in localStorage for demo
+  const user: User = {
+    id: `user-${Date.now()}`,
+    email,
+    displayName: email.split('@')[0],
+    role: 'USER',
+    createdAt: new Date().toISOString(),
+  };
+
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('rumered-user', JSON.stringify(user));
+  }
+
+  return user;
 };
 
 export const signUp = async (
@@ -47,12 +64,31 @@ export const signUp = async (
 ): Promise<User | null> => {
   // Mock sign up - in production, this would create user
   console.log('Sign up with:', email, displayName);
-  return mockUser;
+
+  // Create user and store in localStorage for demo
+  const user: User = {
+    id: `user-${Date.now()}`,
+    email,
+    displayName: displayName || email.split('@')[0],
+    role: 'USER',
+    createdAt: new Date().toISOString(),
+  };
+
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('rumered-user', JSON.stringify(user));
+  }
+
+  return user;
 };
 
 export const signOut = async (): Promise<void> => {
   // Mock sign out - in production, this would clear session
   console.log('Sign out');
+
+  // Clear user from localStorage
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem('rumered-user');
+  }
 };
 
 // Check if user is admin
