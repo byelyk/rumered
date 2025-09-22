@@ -36,10 +36,6 @@ export default function FitCheckPage() {
   const [outfits, setOutfits] = useState<Outfit[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchOutfits();
-  }, [fetchOutfits]);
-
   const fetchOutfits = useCallback(async () => {
     try {
       const response = await fetch('/api/outfits');
@@ -57,6 +53,10 @@ export default function FitCheckPage() {
       setLoading(false);
     }
   }, []);
+
+  useEffect(() => {
+    fetchOutfits();
+  }, [fetchOutfits]);
 
   const handleVote = async (voteData: VoteInput) => {
     try {

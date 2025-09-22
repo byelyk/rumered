@@ -41,10 +41,6 @@ export default function RoomsPage() {
   const [rooms, setRooms] = useState<Room[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchRooms();
-  }, [fetchRooms]);
-
   const fetchRooms = useCallback(async () => {
     try {
       const response = await fetch('/api/rooms');
@@ -62,6 +58,10 @@ export default function RoomsPage() {
       setLoading(false);
     }
   }, []);
+
+  useEffect(() => {
+    fetchRooms();
+  }, [fetchRooms]);
 
   const handleVote = async (voteData: VoteInput) => {
     try {
