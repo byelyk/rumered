@@ -4,6 +4,7 @@ import './globals.css';
 import { Navbar } from '@/components/navbar';
 import { Footer } from '@/components/footer';
 import { ConditionalStackProvider } from '@/components/conditional-stack-provider';
+import { SessionProvider } from 'next-auth/react';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -21,11 +22,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <ConditionalStackProvider>
-          <Navbar />
-          <main className="flex-1">{children}</main>
-          <Footer />
-        </ConditionalStackProvider>
+        <SessionProvider>
+          <ConditionalStackProvider>
+            <Navbar />
+            <main className="flex-1">{children}</main>
+            <Footer />
+          </ConditionalStackProvider>
+        </SessionProvider>
       </body>
     </html>
   );

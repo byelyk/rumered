@@ -2,11 +2,16 @@
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { useSession, signOut } from 'next-auth/react';
 
 import { useUser } from '@/lib/mock-auth';
 
 export function Navbar() {
+  const { data: session } = useSession();
   const user = useUser();
+
+  // Use NextAuth session if available, otherwise fall back to mock auth
+  const currentUser = session?.user || user;
 
   return (
     <nav className="bg-white border-b border-violet-200">
@@ -32,10 +37,13 @@ export function Navbar() {
               Dorm Rooms
             </Link>
 
-            {user ? (
+            {currentUser ? (
               <div className="flex items-center space-x-4">
                 <span className="text-sm text-gray-600">
-                  Hi, {user.displayName || user.email}
+                  Hi,{' '}
+                  {currentUser.displayName ||
+                    currentUser.name ||
+                    currentUser.email}
                 </span>
                 <Link
                   href="/account"
@@ -43,7 +51,8 @@ export function Navbar() {
                 >
                   Account
                 </Link>
-                {user.role === 'ADMIN' && (
+                {(currentUser.role === 'ADMIN' ||
+                  (currentUser as { role?: string })?.role === 'ADMIN') && (
                   <Link
                     href="/admin"
                     className="text-gray-700 hover:text-violet-600 transition-colors"
@@ -53,8 +62,12 @@ export function Navbar() {
                 )}
                 <Button
                   onClick={() => {
-                    // For demo, just reload the page to simulate logout
-                    window.location.reload();
+                    if (session) {
+                      signOut({ callbackUrl: '/' });
+                    } else {
+                      // For demo, just reload the page to simulate logout
+                      window.location.reload();
+                    }
                   }}
                   variant="outline"
                   size="sm"
