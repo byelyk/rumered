@@ -1,6 +1,6 @@
 'use client';
 
-import { useUser } from '@stackframe/stack';
+import { useUser } from '@/lib/mock-auth';
 import { SignUp } from '@stackframe/stack';
 import Link from 'next/link';
 

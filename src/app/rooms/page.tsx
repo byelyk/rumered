@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { useUser } from '@stackframe/stack';
+import { useUser } from '@/lib/mock-auth';
 import {
   Card,
   CardContent,
