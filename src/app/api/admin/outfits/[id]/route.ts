@@ -5,7 +5,7 @@ import { outfitSchema } from '@/lib/validations';
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await stackServerApp.getUser();
@@ -13,11 +13,12 @@ export async function PUT(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const { id } = await params;
     const body = await request.json();
     const validatedData = outfitSchema.parse(body);
 
     const outfit = await db.outfit.update({
-      where: { id: params.id },
+      where: { id },
       data: validatedData,
     });
 
@@ -36,7 +37,7 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await stackServerApp.getUser();
@@ -44,8 +45,9 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const { id } = await params;
     await db.outfit.delete({
-      where: { id: params.id },
+      where: { id },
     });
 
     return NextResponse.json({

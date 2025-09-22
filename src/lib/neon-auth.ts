@@ -13,14 +13,7 @@ export interface User {
   createdAt: string;
 }
 
-// Mock user for development
-const mockUser: User = {
-  id: 'mock-user-id',
-  email: 'user@example.com',
-  displayName: 'Test User',
-  role: 'USER',
-  createdAt: new Date().toISOString(),
-};
+// Mock user for development (removed unused variable)
 
 // Simple auth functions
 export const getCurrentUser = async (): Promise<User | null> => {
@@ -36,7 +29,7 @@ export const getCurrentUser = async (): Promise<User | null> => {
 
 export const signIn = async (
   email: string,
-  password: string
+  _password: string
 ): Promise<User | null> => {
   // Mock sign in - in production, this would validate credentials
   console.log('Sign in with:', email);
