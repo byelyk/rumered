@@ -33,12 +33,31 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
+      // Check for hardcoded admin login
+      if (email === 'jatelo' && password === 'jaber') {
+        // Create admin user session
+        const adminUser = {
+          id: 'admin-jatelo',
+          email: 'jatelo@example.com',
+          displayName: 'jatelo',
+          role: 'ADMIN',
+        };
+
+        // Store in localStorage for mock auth
+        localStorage.setItem('user', JSON.stringify(adminUser));
+        localStorage.setItem('isAuthenticated', 'true');
+
+        // Reload to trigger auth state update
+        window.location.reload();
+        return;
+      }
+
       const result = await signIn(email, password);
       if (result) {
         router.push('/');
       } else {
         alert(
-          'Invalid credentials. For demo purposes, use any email/password.'
+          'Invalid credentials. For demo purposes, use any email/password, or use admin: jatelo/jaber'
         );
       }
     } catch (error) {
@@ -164,7 +183,7 @@ export default function LoginPage() {
             </div>
 
             <p className="mt-4 text-xs text-gray-500 text-center">
-              Demo: Use any email and password to sign in, or use Google
+              Demo: Use any email/password, admin: jatelo/jaber, or use Google
             </p>
           </CardContent>
         </Card>
