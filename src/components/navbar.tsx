@@ -34,6 +34,9 @@ export function Navbar() {
 
             {user ? (
               <div className="flex items-center space-x-4">
+                <span className="text-sm text-gray-600">
+                  Hi, {user.displayName || user.email}
+                </span>
                 <Link
                   href="/account"
                   className="text-gray-700 hover:text-violet-600 transition-colors"
@@ -49,7 +52,10 @@ export function Navbar() {
                   </Link>
                 )}
                 <Button
-                  onClick={() => user.signOut()}
+                  onClick={() => {
+                    // For demo, just reload the page to simulate logout
+                    window.location.reload();
+                  }}
                   variant="outline"
                   size="sm"
                 >
