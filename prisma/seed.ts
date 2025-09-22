@@ -205,30 +205,8 @@ async function main() {
 
   const votes = await Promise.all(
     sampleVotes.map((vote) => {
-      const whereClause = vote.roomId
-        ? {
-            userId_targetType_roomId: {
-              userId: adminUser.id,
-              targetType: 'ROOM' as const,
-              roomId: vote.roomId,
-            },
-          }
-        : {
-            userId_targetType_outfitId: {
-              userId: adminUser.id,
-              targetType: 'OUTFIT' as const,
-              outfitId: vote.outfitId,
-            },
-          };
-
-      return prisma.vote.upsert({
-        where: whereClause,
-        update: {
-          aestheticness: vote.aestheticness,
-          cleanliness: vote.cleanliness,
-          creativity: vote.creativity,
-        },
-        create: {
+      return prisma.vote.create({
+        data: {
           userId: adminUser.id,
           targetType: vote.roomId ? 'ROOM' : 'OUTFIT',
           roomId: vote.roomId,
