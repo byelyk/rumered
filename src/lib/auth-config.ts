@@ -1,10 +1,10 @@
 import { NextAuthOptions } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import { PrismaAdapter } from '@auth/prisma-adapter';
-import { prisma } from './db';
+import { db } from './db';
 
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma),
+  adapter: PrismaAdapter(db),
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -15,34 +15,19 @@ export const authOptions: NextAuthOptions = {
     async session({ session, user }) {
       if (session.user) {
         // Get user from database to check role
-        const dbUser = await prisma.user.findUnique({
+        const dbUser = await db.user.findUnique({
           where: { email: session.user.email! },
         });
 
         session.user.id = user.id;
-        session.user.role = dbUser?.role || 'USER';
-        session.user.displayName = dbUser?.displayName || session.user.name;
+        (session.user as { role?: string }).role = dbUser?.role || 'USER';
+        (session.user as { displayName?: string }).displayName =
+          dbUser?.displayName || session.user.name;
       }
       return session;
     },
-    async signIn({ user, account }) {
-      if (account?.provider === 'google') {
-        // Check if user exists in database
-        const existingUser = await prisma.user.findUnique({
-          where: { email: user.email! },
-        });
-
-        if (!existingUser) {
-          // Create new user
-          await prisma.user.create({
-            data: {
-              email: user.email!,
-              displayName: user.name || user.email!.split('@')[0],
-              role: 'USER',
-            },
-          });
-        }
-      }
+    async signIn() {
+      // Allow all sign-ins - PrismaAdapter will handle user creation
       return true;
     },
   },

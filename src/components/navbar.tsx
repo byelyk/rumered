@@ -4,14 +4,11 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { useSession, signOut } from 'next-auth/react';
 
-import { useUser } from '@/lib/mock-auth';
-
 export function Navbar() {
-  const { data: session } = useSession();
-  const user = useUser();
+  const { data: session, status } = useSession();
 
-  // Use NextAuth session if available, otherwise fall back to mock auth
-  const currentUser = session?.user || user;
+  // Use NextAuth session
+  const currentUser = session?.user;
 
   return (
     <nav className="bg-white border-b border-violet-200">
@@ -37,11 +34,13 @@ export function Navbar() {
               Dorm Rooms
             </Link>
 
-            {currentUser ? (
+            {status === 'loading' ? (
+              <div className="text-sm text-gray-500">Loading...</div>
+            ) : currentUser ? (
               <div className="flex items-center space-x-4">
                 <span className="text-sm text-gray-600">
                   Hi,{' '}
-                  {currentUser.displayName ||
+                  {(currentUser as { displayName?: string })?.displayName ||
                     currentUser.name ||
                     currentUser.email}
                 </span>
@@ -51,8 +50,7 @@ export function Navbar() {
                 >
                   Account
                 </Link>
-                {(currentUser.role === 'ADMIN' ||
-                  (currentUser as { role?: string })?.role === 'ADMIN') && (
+                {(currentUser as { role?: string })?.role === 'ADMIN' && (
                   <Link
                     href="/admin"
                     className="text-gray-700 hover:text-violet-600 transition-colors"
@@ -61,14 +59,7 @@ export function Navbar() {
                   </Link>
                 )}
                 <Button
-                  onClick={() => {
-                    if (session) {
-                      signOut({ callbackUrl: '/' });
-                    } else {
-                      // For demo, just reload the page to simulate logout
-                      window.location.reload();
-                    }
-                  }}
+                  onClick={() => signOut({ callbackUrl: '/' })}
                   variant="outline"
                   size="sm"
                 >
