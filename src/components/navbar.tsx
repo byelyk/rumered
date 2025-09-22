@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 
-import { useUser } from '@/lib/mock-auth';
+import { useUser } from '@stackframe/stack';
 
 export function Navbar() {
   const user = useUser();

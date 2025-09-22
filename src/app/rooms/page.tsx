@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { useUser } from '@/lib/mock-auth';
+import { useUser } from '@stackframe/stack';
 import {
   Card,
   CardContent,
@@ -61,7 +61,7 @@ export default function RoomsPage() {
 
   useEffect(() => {
     fetchRooms();
-  }, [fetchRooms]);
+  }, [fetchRooms, fetchUserVote]);
 
   const handleVote = async (voteData: VoteInput) => {
     try {

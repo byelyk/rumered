@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useUser } from '@/lib/mock-auth';
+import { useUser } from '@stackframe/stack';
 import {
   Dialog,
   DialogContent,

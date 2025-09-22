@@ -10,11 +10,6 @@ interface ConditionalStackProviderProps {
 export function ConditionalStackProvider({
   children,
 }: ConditionalStackProviderProps) {
-  // Only use StackProvider if we have the required environment variables
-  if (process.env.NEXT_PUBLIC_STACKAUTH_API_KEY) {
-    return <StackProvider>{children}</StackProvider>;
-  }
-
-  // Fallback for development without StackAuth
-  return <div className="min-h-screen flex flex-col">{children}</div>;
+  // Always use StackProvider now that we have real StackAuth keys
+  return <StackProvider>{children}</StackProvider>;
 }

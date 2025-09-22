@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useUser } from '@/lib/mock-auth';
+import { useUser } from '@stackframe/stack';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
   Card,
