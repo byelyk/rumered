@@ -1,0 +1,101 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String  @id    // StackAuth user id
+  email          String  @unique
+  displayName    String?
+  role           Role    @default(USER)
+  createdAt      DateTime @default(now())
+  votes          Vote[]
+  applications   RoomApplication[]
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model Outfit {
+  id          String   @id @default(cuid())
+  title       String
+  imageUrl    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  votes       Vote[]   // targetType = OUTFIT
+  isPublished Boolean  @default(true)
+}
+
+model Room {
+  id            String   @id @default(cuid())
+  displayName   String   // e.g., "Cougar Village II • Room 512 (Jayden)"
+  hallName      String?  // e.g., "Cougar Village II"
+  roomNumber    String?  // e.g., "512"
+  campus        String?  // optional
+  school        String?  // optional (UH, etc.)
+  imageUrl      String   // hero image (gallery optional later)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  votes         Vote[]   // targetType = ROOM
+  isPublished   Boolean  @default(true)
+}
+
+enum VoteTargetType {
+  ROOM
+  OUTFIT
+}
+
+model Vote {
+  id             String         @id @default(cuid())
+  userId         String
+  targetType     VoteTargetType
+  roomId         String?
+  outfitId       String?
+  aestheticness  Int
+  cleanliness    Int
+  creativity     Int
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  user   User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  room   Room? @relation(fields: [roomId], references: [id])
+  outfit Outfit? @relation(fields: [outfitId], references: [id])
+
+  // exactly one target is set; 1 vote per user per target
+  @@unique([userId, targetType, roomId])
+  @@unique([userId, targetType, outfitId])
+}
+
+model RoomApplication {
+  id            String   @id @default(cuid())
+  userId        String
+  fullName      String             // applicant name
+  instagram     String?            // optional
+  phoneNumber   String?            // optional
+  hallName      String             // building/hall (free text by user)
+  roomNumber    String?            // optional
+  school        String?            // optional (UH, etc.)
+  message       String?            // optional note
+  status        ApplicationStatus  @default(PENDING)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, status])
+}
+
+enum ApplicationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
