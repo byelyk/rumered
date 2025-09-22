@@ -1,11 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import { useUser } from '@stackframe/stack';
 import { Button } from '@/components/ui/button';
 
+import { useUser } from '@/lib/mock-auth';
+
 export function Navbar() {
-  const user = useUser?.() || null;
+  const user = useUser();
 
   return (
     <nav className="bg-white border-b border-violet-200">

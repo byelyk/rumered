@@ -1,6 +1,6 @@
 'use client';
 
-import { useUser } from '@stackframe/stack';
+import { useUser } from '@/lib/mock-auth';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import {
