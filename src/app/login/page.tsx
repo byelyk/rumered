@@ -52,7 +52,14 @@ export default function LoginPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button onClick={() => user?.signIn()} className="w-full">
+            <Button
+              onClick={() => {
+                alert(
+                  'Sign in functionality will work once StackAuth is properly configured in the dashboard'
+                );
+              }}
+              className="w-full"
+            >
               Sign in with StackAuth
             </Button>
           </CardContent>

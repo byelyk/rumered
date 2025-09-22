@@ -41,6 +41,24 @@ export default function RoomsPage() {
   const [rooms, setRooms] = useState<Room[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const fetchUserVote = useCallback(
+    async (roomId: string) => {
+      if (!user) return undefined;
+
+      try {
+        const response = await fetch(
+          `/api/votes?targetType=ROOM&targetId=${roomId}`
+        );
+        const data = await response.json();
+        return data.vote;
+      } catch (error) {
+        console.error('Error fetching user vote:', error);
+        return undefined;
+      }
+    },
+    [user]
+  );
+
   const fetchRooms = useCallback(async () => {
     try {
       const response = await fetch('/api/rooms');
@@ -57,11 +75,11 @@ export default function RoomsPage() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [fetchUserVote]);
 
   useEffect(() => {
     fetchRooms();
-  }, [fetchRooms, fetchUserVote]);
+  }, [fetchRooms]);
 
   const handleVote = async (voteData: VoteInput) => {
     try {
@@ -82,21 +100,6 @@ export default function RoomsPage() {
     } catch (error) {
       console.error('Error submitting vote:', error);
       throw error;
-    }
-  };
-
-  const fetchUserVote = async (roomId: string) => {
-    if (!user) return undefined;
-
-    try {
-      const response = await fetch(
-        `/api/votes?targetType=ROOM&targetId=${roomId}`
-      );
-      const data = await response.json();
-      return data.vote;
-    } catch (error) {
-      console.error('Error fetching user vote:', error);
-      return undefined;
     }
   };
 

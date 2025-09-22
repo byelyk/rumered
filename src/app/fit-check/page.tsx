@@ -36,6 +36,24 @@ export default function FitCheckPage() {
   const [outfits, setOutfits] = useState<Outfit[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const fetchUserVote = useCallback(
+    async (outfitId: string) => {
+      if (!user) return undefined;
+
+      try {
+        const response = await fetch(
+          `/api/votes?targetType=OUTFIT&targetId=${outfitId}`
+        );
+        const data = await response.json();
+        return data.vote;
+      } catch (error) {
+        console.error('Error fetching user vote:', error);
+        return undefined;
+      }
+    },
+    [user]
+  );
+
   const fetchOutfits = useCallback(async () => {
     try {
       const response = await fetch('/api/outfits');
@@ -52,11 +70,11 @@ export default function FitCheckPage() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [fetchUserVote]);
 
   useEffect(() => {
     fetchOutfits();
-  }, [fetchOutfits, fetchUserVote]);
+  }, [fetchOutfits]);
 
   const handleVote = async (voteData: VoteInput) => {
     try {
@@ -77,21 +95,6 @@ export default function FitCheckPage() {
     } catch (error) {
       console.error('Error submitting vote:', error);
       throw error;
-    }
-  };
-
-  const fetchUserVote = async (outfitId: string) => {
-    if (!user) return undefined;
-
-    try {
-      const response = await fetch(
-        `/api/votes?targetType=OUTFIT&targetId=${outfitId}`
-      );
-      const data = await response.json();
-      return data.vote;
-    } catch (error) {
-      console.error('Error fetching user vote:', error);
-      return undefined;
     }
   };
 
