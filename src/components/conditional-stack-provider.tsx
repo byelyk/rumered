@@ -16,5 +16,5 @@ export function ConditionalStackProvider({
   }
 
   // Fallback for development without StackAuth
-  return <>{children}</>;
+  return <div className="min-h-screen flex flex-col">{children}</div>;
 }

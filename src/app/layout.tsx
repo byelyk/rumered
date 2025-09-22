@@ -22,11 +22,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <ConditionalStackProvider>
-          <div className="min-h-screen flex flex-col">
-            <Navbar />
-            <main className="flex-1">{children}</main>
-            <Footer />
-          </div>
+          <Navbar />
+          <main className="flex-1">{children}</main>
+          <Footer />
         </ConditionalStackProvider>
       </body>
     </html>
