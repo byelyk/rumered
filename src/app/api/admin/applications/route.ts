@@ -15,7 +15,7 @@ export async function GET() {
       .sort((a, b) => {
         const statA = statSync(join(applicationsDir, a));
         const statB = statSync(join(applicationsDir, b));
-        return statB.mtime - statA.mtime; // Sort by newest first
+        return statB.mtime.getTime() - statA.mtime.getTime(); // Sort by newest first
       });
 
     const applications = files
