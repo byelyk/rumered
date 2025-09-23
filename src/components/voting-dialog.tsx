@@ -51,7 +51,9 @@ export function VotingDialog({
     try {
       const voteData: VoteInput = {
         targetType,
-        targetId,
+        ...(targetType === 'ROOM'
+          ? { roomId: targetId }
+          : { outfitId: targetId }),
         ...scores,
       };
 
