@@ -28,7 +28,8 @@ export const authOptions: NextAuthOptions = {
 
         extendedUser.id = user.id;
         extendedUser.role = dbUser?.role || 'USER';
-        extendedUser.displayName = dbUser?.displayName || session.user.name;
+        extendedUser.displayName =
+          dbUser?.displayName || session.user.name || undefined;
       }
       return session;
     },
