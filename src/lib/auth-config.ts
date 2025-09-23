@@ -19,10 +19,16 @@ export const authOptions: NextAuthOptions = {
           where: { email: session.user.email! },
         });
 
-        session.user.id = user.id;
-        (session.user as { role?: string }).role = dbUser?.role || 'USER';
-        (session.user as { displayName?: string }).displayName =
-          dbUser?.displayName || session.user.name;
+        // Extend session user with additional properties
+        const extendedUser = session.user as typeof session.user & {
+          id: string;
+          role?: string;
+          displayName?: string;
+        };
+
+        extendedUser.id = user.id;
+        extendedUser.role = dbUser?.role || 'USER';
+        extendedUser.displayName = dbUser?.displayName || session.user.name;
       }
       return session;
     },
