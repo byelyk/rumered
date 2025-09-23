@@ -16,6 +16,7 @@ interface Application {
   id: string;
   fullName: string;
   email?: string;
+  instagram?: string;
   phoneNumber?: string;
   hallName: string;
   roomNumber?: string;
@@ -24,6 +25,9 @@ interface Application {
   academicYear?: string;
   description?: string;
   photoUrls?: string[];
+  participantCount?: string;
+  dormType?: string;
+  filmingStatus: string;
   status: string;
   createdAt: string;
   updatedAt?: string;
@@ -88,6 +92,31 @@ export default function ApplicationsPage() {
     }
   };
 
+  const handleFilmingStatusUpdate = async (
+    id: string,
+    filmingStatus: 'NOT_FILMED' | 'FILMED'
+  ) => {
+    try {
+      const response = await fetch(`/api/admin/applications/${id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ filmingStatus }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update filming status');
+      }
+
+      // Refresh the applications list
+      await fetchApplications();
+    } catch (error) {
+      console.error('Error updating filming status:', error);
+      alert('Failed to update filming status. Please try again.');
+    }
+  };
+
   const handleDelete = async (id: string) => {
     if (
       !confirm(
@@ -124,6 +153,16 @@ export default function ApplicationsPage() {
       case 'PENDING':
       default:
         return 'bg-yellow-100 text-yellow-800';
+    }
+  };
+
+  const getFilmingStatusColor = (status: string) => {
+    switch (status?.toUpperCase()) {
+      case 'FILMED':
+        return 'bg-blue-100 text-blue-800';
+      case 'NOT_FILMED':
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
@@ -192,24 +231,33 @@ export default function ApplicationsPage() {
                         {application.roomNumber || 'N/A'}
                       </CardDescription>
                     </div>
-                    <Badge className={getStatusColor(application.status)}>
-                      {application.status || 'PENDING'}
-                    </Badge>
+                    <div className="flex flex-col gap-1">
+                      <Badge className={getStatusColor(application.status)}>
+                        {application.status || 'PENDING'}
+                      </Badge>
+                      <Badge
+                        className={getFilmingStatusColor(
+                          application.filmingStatus
+                        )}
+                      >
+                        {application.filmingStatus || 'NOT_FILMED'}
+                      </Badge>
+                    </div>
                   </div>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2 text-sm text-gray-600">
                     <p>
-                      <strong>Email:</strong>{' '}
-                      {application.email || 'Not provided'}
+                      <strong>Instagram:</strong>{' '}
+                      {application.instagram || 'Not provided'}
                     </p>
                     <p>
-                      <strong>School:</strong>{' '}
-                      {application.school || 'Not specified'}
+                      <strong>Participants:</strong>{' '}
+                      {application.participantCount || 'Not specified'}
                     </p>
                     <p>
-                      <strong>Year:</strong>{' '}
-                      {application.academicYear || 'Not specified'}
+                      <strong>Dorm Type:</strong>{' '}
+                      {application.dormType || 'Not specified'}
                     </p>
                     <p>
                       <strong>Submitted:</strong>{' '}
@@ -223,46 +271,77 @@ export default function ApplicationsPage() {
                     </p>
                   )}
 
-                  <div className="mt-4 flex gap-2">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => setSelectedApplication(application)}
-                    >
-                      View Details
-                    </Button>
-                    {application.status !== 'APPROVED' && (
+                  <div className="mt-4 space-y-2">
+                    <div className="flex gap-2">
                       <Button
                         size="sm"
                         variant="outline"
-                        className="text-green-600 hover:text-green-700"
-                        onClick={() =>
-                          handleStatusUpdate(application.id, 'APPROVED')
-                        }
+                        onClick={() => setSelectedApplication(application)}
                       >
-                        Approve
+                        View Details
                       </Button>
-                    )}
-                    {application.status !== 'REJECTED' && (
+                      {application.status !== 'APPROVED' && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="text-green-600 hover:text-green-700"
+                          onClick={() =>
+                            handleStatusUpdate(application.id, 'APPROVED')
+                          }
+                        >
+                          Approve
+                        </Button>
+                      )}
+                      {application.status !== 'REJECTED' && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="text-red-600 hover:text-red-700"
+                          onClick={() =>
+                            handleStatusUpdate(application.id, 'REJECTED')
+                          }
+                        >
+                          Reject
+                        </Button>
+                      )}
                       <Button
                         size="sm"
                         variant="outline"
-                        className="text-red-600 hover:text-red-700"
-                        onClick={() =>
-                          handleStatusUpdate(application.id, 'REJECTED')
-                        }
+                        className="text-gray-600 hover:text-gray-700"
+                        onClick={() => handleDelete(application.id)}
                       >
-                        Reject
+                        Delete
                       </Button>
-                    )}
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="text-gray-600 hover:text-gray-700"
-                      onClick={() => handleDelete(application.id)}
-                    >
-                      Delete
-                    </Button>
+                    </div>
+                    <div className="flex gap-2">
+                      {application.filmingStatus !== 'FILMED' && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="text-blue-600 hover:text-blue-700"
+                          onClick={() =>
+                            handleFilmingStatusUpdate(application.id, 'FILMED')
+                          }
+                        >
+                          Mark as Filmed
+                        </Button>
+                      )}
+                      {application.filmingStatus !== 'NOT_FILMED' && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="text-orange-600 hover:text-orange-700"
+                          onClick={() =>
+                            handleFilmingStatusUpdate(
+                              application.id,
+                              'NOT_FILMED'
+                            )
+                          }
+                        >
+                          Mark as Not Filmed
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 </CardContent>
               </Card>

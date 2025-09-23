@@ -8,25 +8,38 @@ export async function PATCH(
   try {
     const { id } = await params;
     const body = await request.json();
-    const { status } = body;
+    const { status, filmingStatus } = body;
 
-    if (!status || !['PENDING', 'APPROVED', 'REJECTED'].includes(status)) {
-      return NextResponse.json({ error: 'Invalid status' }, { status: 400 });
+    const updateData: { status?: string; filmingStatus?: string } = {};
+
+    if (status && ['PENDING', 'APPROVED', 'REJECTED'].includes(status)) {
+      updateData.status = status;
+    }
+
+    if (filmingStatus && ['NOT_FILMED', 'FILMED'].includes(filmingStatus)) {
+      updateData.filmingStatus = filmingStatus;
+    }
+
+    if (Object.keys(updateData).length === 0) {
+      return NextResponse.json(
+        { error: 'No valid fields to update' },
+        { status: 400 }
+      );
     }
 
     const application = await db.roomApplication.update({
       where: { id },
-      data: { status },
+      data: updateData,
     });
 
     return NextResponse.json({
-      message: 'Application status updated successfully',
+      message: 'Application updated successfully',
       application,
     });
   } catch (error) {
-    console.error('Error updating application status:', error);
+    console.error('Error updating application:', error);
     return NextResponse.json(
-      { error: 'Failed to update application status' },
+      { error: 'Failed to update application' },
       { status: 500 }
     );
   }

@@ -13,6 +13,8 @@ export const roomApplicationSchema = z.object({
   fullName: z.string().min(1).max(100),
   instagram: z.string().min(1).max(100),
   hallName: z.string().min(1).max(100),
+  participantCount: z.string().min(1).max(10),
+  dormType: z.string().min(1).max(20),
 });
 
 export const outfitSchema = z.object({

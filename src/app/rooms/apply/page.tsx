@@ -20,6 +20,8 @@ export default function RoomApplicationPage() {
     fullName: '',
     instagram: '',
     hallName: '',
+    participantCount: '',
+    dormType: '',
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -34,6 +36,12 @@ export default function RoomApplicationPage() {
           ? sanitizeText(formData.instagram)
           : undefined,
         hallName: sanitizeText(formData.hallName),
+        participantCount: formData.participantCount
+          ? sanitizeText(formData.participantCount)
+          : undefined,
+        dormType: formData.dormType
+          ? sanitizeText(formData.dormType)
+          : undefined,
       };
 
       const response = await fetch('/api/applications', {
@@ -55,6 +63,8 @@ export default function RoomApplicationPage() {
         fullName: '',
         instagram: '',
         hallName: '',
+        participantCount: '',
+        dormType: '',
       });
     } catch (error) {
       console.error('Error submitting application:', error);
@@ -173,6 +183,52 @@ export default function RoomApplicationPage() {
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500 transition-colors"
                       placeholder="e.g., Cougar Village II, Moody Towers, etc."
                     />
+                  </div>
+
+                  <div>
+                    <label
+                      htmlFor="participantCount"
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                    >
+                      How many people will be participating in the tour? *
+                    </label>
+                    <select
+                      id="participantCount"
+                      name="participantCount"
+                      value={formData.participantCount || ''}
+                      onChange={handleChange}
+                      required
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500 transition-colors"
+                    >
+                      <option value="">Select number of participants</option>
+                      <option value="1">1 person</option>
+                      <option value="2">2 people</option>
+                      <option value="3">3 people</option>
+                      <option value="4">4 people</option>
+                      <option value="5+">5+ people</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label
+                      htmlFor="dormType"
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                    >
+                      Is this a girl or boy dorm? *
+                    </label>
+                    <select
+                      id="dormType"
+                      name="dormType"
+                      value={formData.dormType || ''}
+                      onChange={handleChange}
+                      required
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500 transition-colors"
+                    >
+                      <option value="">Select dorm type</option>
+                      <option value="Girls">Girls dorm</option>
+                      <option value="Boys">Boys dorm</option>
+                      <option value="Co-ed">Co-ed dorm</option>
+                    </select>
                   </div>
                 </div>
 
