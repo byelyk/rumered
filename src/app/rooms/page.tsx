@@ -206,24 +206,18 @@ export default function RoomsPage() {
                       </div>
                     </div>
 
-                    {user ? (
-                      <VotingDialog
-                        targetType="ROOM"
-                        targetId={room.id}
-                        targetName={room.displayName}
-                        targetImage={room.imageUrl}
-                        currentVote={room.userVote}
-                        onVote={handleVote}
-                      >
-                        <Button className="w-full">
-                          {room.userVote ? 'Update Vote' : 'Vote'}
-                        </Button>
-                      </VotingDialog>
-                    ) : (
-                      <Button className="w-full" disabled>
-                        Login to Vote
+                    <VotingDialog
+                      targetType="ROOM"
+                      targetId={room.id}
+                      targetName={room.displayName}
+                      targetImage={room.imageUrl}
+                      currentVote={room.userVote}
+                      onVote={handleVote}
+                    >
+                      <Button className="w-full">
+                        {room.userVote ? 'Update Vote' : 'Vote'}
                       </Button>
-                    )}
+                    </VotingDialog>
                   </CardContent>
                 </Card>
               );

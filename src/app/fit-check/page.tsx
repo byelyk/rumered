@@ -184,24 +184,18 @@ export default function FitCheckPage() {
                       </div>
                     </div>
 
-                    {user ? (
-                      <VotingDialog
-                        targetType="OUTFIT"
-                        targetId={outfit.id}
-                        targetName={outfit.title}
-                        targetImage={outfit.imageUrl}
-                        currentVote={outfit.userVote}
-                        onVote={handleVote}
-                      >
-                        <Button className="w-full">
-                          {outfit.userVote ? 'Update Vote' : 'Vote'}
-                        </Button>
-                      </VotingDialog>
-                    ) : (
-                      <Button className="w-full" disabled>
-                        Login to Vote
+                    <VotingDialog
+                      targetType="OUTFIT"
+                      targetId={outfit.id}
+                      targetName={outfit.title}
+                      targetImage={outfit.imageUrl}
+                      currentVote={outfit.userVote}
+                      onVote={handleVote}
+                    >
+                      <Button className="w-full">
+                        {outfit.userVote ? 'Update Vote' : 'Vote'}
                       </Button>
-                    )}
+                    </VotingDialog>
                   </CardContent>
                 </Card>
               );
