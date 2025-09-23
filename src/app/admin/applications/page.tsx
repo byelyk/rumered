@@ -15,17 +15,17 @@ import { Badge } from '@/components/ui/badge';
 interface Application {
   id: string;
   fullName: string;
-  email: string;
+  email?: string;
   phoneNumber?: string;
   hallName: string;
   roomNumber?: string;
   campus?: string;
   school?: string;
   academicYear?: string;
-  description: string;
-  photoUrls: string[];
+  description?: string;
+  photoUrls?: string[];
   status: string;
-  submittedAt: string;
+  createdAt: string;
   updatedAt?: string;
 }
 
@@ -59,6 +59,59 @@ export default function ApplicationsPage() {
       console.error('Error fetching applications:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleStatusUpdate = async (
+    id: string,
+    status: 'APPROVED' | 'REJECTED'
+  ) => {
+    try {
+      const response = await fetch(`/api/admin/applications/${id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update application status');
+      }
+
+      // Refresh the applications list
+      await fetchApplications();
+      setSelectedApplication(null); // Close modal after update
+    } catch (error) {
+      console.error('Error updating status:', error);
+      alert('Failed to update application status. Please try again.');
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (
+      !confirm(
+        'Are you sure you want to delete this application? This action cannot be undone.'
+      )
+    ) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/admin/applications/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete application');
+      }
+
+      // Refresh the applications list
+      await fetchApplications();
+      setSelectedApplication(null); // Close modal after delete
+    } catch (error) {
+      console.error('Error deleting application:', error);
+      alert('Failed to delete application. Please try again.');
     }
   };
 
@@ -160,7 +213,7 @@ export default function ApplicationsPage() {
                     </p>
                     <p>
                       <strong>Submitted:</strong>{' '}
-                      {new Date(application.submittedAt).toLocaleDateString()}
+                      {new Date(application.createdAt).toLocaleDateString()}
                     </p>
                   </div>
 
@@ -178,19 +231,37 @@ export default function ApplicationsPage() {
                     >
                       View Details
                     </Button>
+                    {application.status !== 'APPROVED' && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="text-green-600 hover:text-green-700"
+                        onClick={() =>
+                          handleStatusUpdate(application.id, 'APPROVED')
+                        }
+                      >
+                        Approve
+                      </Button>
+                    )}
+                    {application.status !== 'REJECTED' && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="text-red-600 hover:text-red-700"
+                        onClick={() =>
+                          handleStatusUpdate(application.id, 'REJECTED')
+                        }
+                      >
+                        Reject
+                      </Button>
+                    )}
                     <Button
                       size="sm"
                       variant="outline"
-                      className="text-green-600 hover:text-green-700"
+                      className="text-gray-600 hover:text-gray-700"
+                      onClick={() => handleDelete(application.id)}
                     >
-                      Approve
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="text-red-600 hover:text-red-700"
-                    >
-                      Reject
+                      Delete
                     </Button>
                   </div>
                 </CardContent>
@@ -282,14 +353,33 @@ export default function ApplicationsPage() {
                   )}
 
                 <div className="flex gap-2 pt-4">
-                  <Button className="text-green-600 hover:text-green-700">
-                    Approve Application
-                  </Button>
+                  {selectedApplication.status !== 'APPROVED' && (
+                    <Button
+                      className="text-green-600 hover:text-green-700"
+                      onClick={() =>
+                        handleStatusUpdate(selectedApplication.id, 'APPROVED')
+                      }
+                    >
+                      Approve Application
+                    </Button>
+                  )}
+                  {selectedApplication.status !== 'REJECTED' && (
+                    <Button
+                      variant="outline"
+                      className="text-red-600 hover:text-red-700"
+                      onClick={() =>
+                        handleStatusUpdate(selectedApplication.id, 'REJECTED')
+                      }
+                    >
+                      Reject Application
+                    </Button>
+                  )}
                   <Button
                     variant="outline"
-                    className="text-red-600 hover:text-red-700"
+                    className="text-gray-600 hover:text-gray-700"
+                    onClick={() => handleDelete(selectedApplication.id)}
                   >
-                    Reject Application
+                    Delete Application
                   </Button>
                 </div>
               </CardContent>

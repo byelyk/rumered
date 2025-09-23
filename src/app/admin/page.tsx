@@ -219,40 +219,12 @@ export default function AdminDashboard() {
         )}
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Manage Rooms</CardTitle>
-              <CardDescription>
-                Add, edit, and manage dorm room features
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Link href="/admin/rooms">
-                <Button className="w-full">Manage Rooms</Button>
-              </Link>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Manage Outfits</CardTitle>
-              <CardDescription>
-                Add, edit, and manage outfit features
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Link href="/admin/outfits">
-                <Button className="w-full">Manage Outfits</Button>
-              </Link>
-            </CardContent>
-          </Card>
-
-          <Card>
+        <div className="flex justify-center">
+          <Card className="w-full max-w-md">
             <CardHeader>
               <CardTitle>Review Applications</CardTitle>
               <CardDescription>
-                Review and approve room applications
+                Review and manage room applications
               </CardDescription>
             </CardHeader>
             <CardContent>
