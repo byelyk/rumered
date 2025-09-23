@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { stackServerApp } from '@/lib/auth';
 import { db } from '@/lib/db';
 
 export async function PATCH(
@@ -7,11 +6,6 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const user = await stackServerApp.getUser();
-    if (!user || (user as { role?: string }).role !== 'ADMIN') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
     const { id } = await params;
     const body = await request.json();
     const { status } = body;
@@ -33,6 +27,29 @@ export async function PATCH(
     console.error('Error updating application status:', error);
     return NextResponse.json(
       { error: 'Failed to update application status' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+
+    await db.roomApplication.delete({
+      where: { id },
+    });
+
+    return NextResponse.json({
+      message: 'Application deleted successfully',
+    });
+  } catch (error) {
+    console.error('Error deleting application:', error);
+    return NextResponse.json(
+      { error: 'Failed to delete application' },
       { status: 500 }
     );
   }
