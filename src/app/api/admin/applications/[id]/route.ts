@@ -10,14 +10,17 @@ export async function PATCH(
     const body = await request.json();
     const { status, filmingStatus } = body;
 
-    const updateData: { status?: string; filmingStatus?: string } = {};
+    const updateData: {
+      status?: 'PENDING' | 'APPROVED' | 'REJECTED';
+      filmingStatus?: 'NOT_FILMED' | 'FILMED';
+    } = {};
 
     if (status && ['PENDING', 'APPROVED', 'REJECTED'].includes(status)) {
-      updateData.status = status;
+      updateData.status = status as 'PENDING' | 'APPROVED' | 'REJECTED';
     }
 
     if (filmingStatus && ['NOT_FILMED', 'FILMED'].includes(filmingStatus)) {
-      updateData.filmingStatus = filmingStatus;
+      updateData.filmingStatus = filmingStatus as 'NOT_FILMED' | 'FILMED';
     }
 
     if (Object.keys(updateData).length === 0) {
