@@ -44,7 +44,14 @@ export default function RoomApplicationPage() {
           ? sanitizeText(formData.roomNumber)
           : undefined,
         school: formData.school ? sanitizeText(formData.school) : undefined,
+        academicYear: formData.academicYear
+          ? sanitizeText(formData.academicYear)
+          : undefined,
+        description: formData.description
+          ? sanitizeText(formData.description)
+          : undefined,
         message: formData.message ? sanitizeText(formData.message) : undefined,
+        photoUrls: formData.photoUrls?.filter((url) => url.trim() !== '') || [],
       };
 
       const response = await fetch('/api/applications', {
@@ -170,6 +177,23 @@ export default function RoomApplicationPage() {
 
               <div>
                 <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Email
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-violet-500 focus:border-violet-500"
+                />
+              </div>
+
+              <div>
+                <label
                   htmlFor="school"
                   className="block text-sm font-medium text-gray-700 mb-2"
                 >
@@ -183,6 +207,29 @@ export default function RoomApplicationPage() {
                   onChange={handleChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-violet-500 focus:border-violet-500"
                 />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="academicYear"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Academic Year
+                </label>
+                <select
+                  id="academicYear"
+                  name="academicYear"
+                  value={formData.academicYear}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-violet-500 focus:border-violet-500"
+                >
+                  <option value="">Select Year</option>
+                  <option value="Freshman">Freshman</option>
+                  <option value="Sophomore">Sophomore</option>
+                  <option value="Junior">Junior</option>
+                  <option value="Senior">Senior</option>
+                  <option value="Graduate">Graduate</option>
+                </select>
               </div>
 
               <div>
@@ -222,6 +269,81 @@ export default function RoomApplicationPage() {
 
               <div>
                 <label
+                  htmlFor="description"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Room Description
+                </label>
+                <textarea
+                  id="description"
+                  name="description"
+                  value={formData.description}
+                  onChange={handleChange}
+                  rows={4}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-violet-500 focus:border-violet-500"
+                  placeholder="Describe your room setup, what makes it special, or any other details you'd like to share..."
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="photoUrls"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Photo URLs (Optional)
+                </label>
+                <div className="space-y-2">
+                  {formData.photoUrls?.map((url, index) => (
+                    <div key={index} className="flex gap-2">
+                      <input
+                        type="url"
+                        value={url}
+                        onChange={(e) => {
+                          const newPhotoUrls = [...(formData.photoUrls || [])];
+                          newPhotoUrls[index] = e.target.value;
+                          setFormData((prev) => ({
+                            ...prev,
+                            photoUrls: newPhotoUrls,
+                          }));
+                        }}
+                        className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-violet-500 focus:border-violet-500"
+                        placeholder="https://example.com/photo.jpg"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          const newPhotoUrls = [...(formData.photoUrls || [])];
+                          newPhotoUrls.splice(index, 1);
+                          setFormData((prev) => ({
+                            ...prev,
+                            photoUrls: newPhotoUrls,
+                          }));
+                        }}
+                      >
+                        Remove
+                      </Button>
+                    </div>
+                  ))}
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setFormData((prev) => ({
+                        ...prev,
+                        photoUrls: [...(prev.photoUrls || []), ''],
+                      }));
+                    }}
+                  >
+                    Add Photo URL
+                  </Button>
+                </div>
+              </div>
+
+              <div>
+                <label
                   htmlFor="message"
                   className="block text-sm font-medium text-gray-700 mb-2"
                 >
@@ -234,7 +356,7 @@ export default function RoomApplicationPage() {
                   onChange={handleChange}
                   rows={4}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-violet-500 focus:border-violet-500"
-                  placeholder="Tell us about your room setup, what makes it special, or any other details you'd like to share..."
+                  placeholder="Any additional notes or comments..."
                 />
               </div>
 
