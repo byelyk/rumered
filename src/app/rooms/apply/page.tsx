@@ -18,11 +18,15 @@ export default function RoomApplicationPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState<RoomApplicationInput>({
     fullName: '',
+    email: '',
     instagram: '',
     phoneNumber: '',
     hallName: '',
     roomNumber: '',
     school: '',
+    academicYear: '',
+    description: '',
+    photoUrls: [],
     message: '',
   });
 
@@ -60,11 +64,15 @@ export default function RoomApplicationPage() {
       );
       setFormData({
         fullName: '',
+        email: '',
         instagram: '',
         phoneNumber: '',
         hallName: '',
         roomNumber: '',
         school: '',
+        academicYear: '',
+        description: '',
+        photoUrls: [],
         message: '',
       });
     } catch (error) {
