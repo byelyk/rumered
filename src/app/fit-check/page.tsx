@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { useUser } from '@/lib/mock-auth';
 import {
   Card,
   CardContent,
@@ -32,27 +31,21 @@ interface Outfit {
 }
 
 export default function FitCheckPage() {
-  const user = useUser();
   const [outfits, setOutfits] = useState<Outfit[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchUserVote = useCallback(
-    async (outfitId: string) => {
-      if (!user) return undefined;
-
-      try {
-        const response = await fetch(
-          `/api/votes?targetType=OUTFIT&targetId=${outfitId}`
-        );
-        const data = await response.json();
-        return data.vote;
-      } catch (error) {
-        console.error('Error fetching user vote:', error);
-        return undefined;
-      }
-    },
-    [user]
-  );
+  const fetchUserVote = useCallback(async (outfitId: string) => {
+    try {
+      const response = await fetch(
+        `/api/votes?targetType=OUTFIT&targetId=${outfitId}`
+      );
+      const data = await response.json();
+      return data.vote;
+    } catch (error) {
+      console.error('Error fetching user vote:', error);
+      return undefined;
+    }
+  }, []);
 
   const fetchOutfits = useCallback(async () => {
     try {

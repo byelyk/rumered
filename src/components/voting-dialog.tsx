@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useUser } from '@/lib/mock-auth';
 import {
   Dialog,
   DialogContent,
@@ -39,7 +38,6 @@ export function VotingDialog({
   onVote,
   children,
 }: VotingDialogProps) {
-  const user = useUser();
   const [open, setOpen] = useState(false);
   const [scores, setScores] = useState({
     aestheticness: currentVote?.aestheticness || 5,
@@ -49,8 +47,6 @@ export function VotingDialog({
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleVote = async () => {
-    if (!user) return;
-
     setIsSubmitting(true);
     try {
       const voteData: VoteInput = {

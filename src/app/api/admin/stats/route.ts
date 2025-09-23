@@ -1,14 +1,8 @@
 import { NextResponse } from 'next/server';
-import { stackServerApp } from '@/lib/auth';
 import { db } from '@/lib/db';
 
 export async function GET() {
   try {
-    const user = await stackServerApp.getUser();
-    if (!user || (user as { role?: string }).role !== 'ADMIN') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
     const [
       totalRooms,
       totalOutfits,

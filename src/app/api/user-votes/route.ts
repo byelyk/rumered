@@ -1,17 +1,25 @@
-import { NextResponse } from 'next/server';
-import { stackServerApp } from '@/lib/auth';
+import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 
-export async function GET() {
+// Helper function to get device ID from cookies
+function getDeviceId(request: NextRequest): string {
+  let deviceId = request.cookies.get('device-id')?.value;
+
+  if (!deviceId) {
+    // Generate a new device ID
+    deviceId = `device_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  }
+
+  return deviceId;
+}
+
+export async function GET(request: NextRequest) {
   try {
-    const user = await stackServerApp.getUser();
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const deviceId = getDeviceId(request);
 
     const votes = await db.vote.findMany({
       where: {
-        userId: (user as { id: string }).id,
+        deviceId: deviceId,
       },
       include: {
         room: {
@@ -32,9 +40,19 @@ export async function GET() {
       },
     });
 
-    return NextResponse.json({ votes });
+    const response = NextResponse.json({ votes });
+
+    // Set device ID cookie
+    response.cookies.set('device-id', deviceId, {
+      maxAge: 60 * 60 * 24 * 365, // 1 year
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+    });
+
+    return response;
   } catch (error) {
-    console.error('Error fetching user votes:', error);
+    console.error('Error fetching votes:', error);
     return NextResponse.json(
       { error: 'Failed to fetch votes' },
       { status: 500 }

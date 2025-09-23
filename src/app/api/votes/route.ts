@@ -1,22 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { stackServerApp } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { voteSchema } from '@/lib/validations';
 
+// Helper function to get device ID from cookies
+function getDeviceId(request: NextRequest): string {
+  let deviceId = request.cookies.get('device-id')?.value;
+
+  if (!deviceId) {
+    // Generate a new device ID
+    deviceId = `device_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  }
+
+  return deviceId;
+}
+
 export async function POST(request: NextRequest) {
   try {
-    const user = await stackServerApp.getUser();
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
+    const deviceId = getDeviceId(request);
     const body = await request.json();
     const validatedData = voteSchema.parse(body);
 
-    // Check if user already voted on this target
+    // Check if device already voted on this target
     const existingVote = await db.vote.findFirst({
       where: {
-        userId: (user as { id: string }).id,
+        deviceId: deviceId,
         targetType: validatedData.targetType,
         ...(validatedData.targetType === 'ROOM'
           ? { roomId: validatedData.targetId }
@@ -35,15 +42,25 @@ export async function POST(request: NextRequest) {
         },
       });
 
-      return NextResponse.json({
+      const response = NextResponse.json({
         message: 'Vote updated successfully',
         vote: updatedVote,
       });
+
+      // Set device ID cookie
+      response.cookies.set('device-id', deviceId, {
+        maxAge: 60 * 60 * 24 * 365, // 1 year
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+      });
+
+      return response;
     } else {
       // Create new vote
       const newVote = await db.vote.create({
         data: {
-          userId: (user as { id: string }).id,
+          deviceId: deviceId,
           targetType: validatedData.targetType,
           ...(validatedData.targetType === 'ROOM'
             ? { roomId: validatedData.targetId }
@@ -54,10 +71,20 @@ export async function POST(request: NextRequest) {
         },
       });
 
-      return NextResponse.json({
+      const response = NextResponse.json({
         message: 'Vote submitted successfully',
         vote: newVote,
       });
+
+      // Set device ID cookie
+      response.cookies.set('device-id', deviceId, {
+        maxAge: 60 * 60 * 24 * 365, // 1 year
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+      });
+
+      return response;
     }
   } catch (error) {
     console.error('Error processing vote:', error);
@@ -70,11 +97,7 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
-    const user = await stackServerApp.getUser();
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
+    const deviceId = getDeviceId(request);
     const { searchParams } = new URL(request.url);
     const targetType = searchParams.get('targetType');
     const targetId = searchParams.get('targetId');
@@ -88,7 +111,7 @@ export async function GET(request: NextRequest) {
 
     const vote = await db.vote.findFirst({
       where: {
-        userId: (user as { id: string }).id,
+        deviceId: deviceId,
         targetType: targetType as 'ROOM' | 'OUTFIT',
         ...(targetType === 'ROOM'
           ? { roomId: targetId }
@@ -96,7 +119,17 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    return NextResponse.json({ vote });
+    const response = NextResponse.json({ vote });
+
+    // Set device ID cookie
+    response.cookies.set('device-id', deviceId, {
+      maxAge: 60 * 60 * 24 * 365, // 1 year
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+    });
+
+    return response;
   } catch (error) {
     console.error('Error fetching vote:', error);
     return NextResponse.json(

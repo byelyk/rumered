@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { useUser } from '@/lib/mock-auth';
 import {
   Card,
   CardContent,
@@ -37,27 +36,21 @@ interface Room {
 }
 
 export default function RoomsPage() {
-  const user = useUser();
   const [rooms, setRooms] = useState<Room[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchUserVote = useCallback(
-    async (roomId: string) => {
-      if (!user) return undefined;
-
-      try {
-        const response = await fetch(
-          `/api/votes?targetType=ROOM&targetId=${roomId}`
-        );
-        const data = await response.json();
-        return data.vote;
-      } catch (error) {
-        console.error('Error fetching user vote:', error);
-        return undefined;
-      }
-    },
-    [user]
-  );
+  const fetchUserVote = useCallback(async (roomId: string) => {
+    try {
+      const response = await fetch(
+        `/api/votes?targetType=ROOM&targetId=${roomId}`
+      );
+      const data = await response.json();
+      return data.vote;
+    } catch (error) {
+      console.error('Error fetching user vote:', error);
+      return undefined;
+    }
+  }, []);
 
   const fetchRooms = useCallback(async () => {
     try {

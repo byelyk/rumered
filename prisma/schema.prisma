@@ -85,7 +85,8 @@ enum VoteTargetType {
 
 model Vote {
   id             String         @id @default(cuid())
-  userId         String
+  userId         String?
+  deviceId       String?
   targetType     VoteTargetType
   roomId         String?
   outfitId       String?
@@ -95,13 +96,15 @@ model Vote {
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
 
-  user   User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user   User?  @relation(fields: [userId], references: [id], onDelete: Cascade)
   room   Room? @relation(fields: [roomId], references: [id])
   outfit Outfit? @relation(fields: [outfitId], references: [id])
 
-  // exactly one target is set; 1 vote per user per target
+  // exactly one target is set; 1 vote per user/device per target
   @@unique([userId, targetType, roomId])
   @@unique([userId, targetType, outfitId])
+  @@unique([deviceId, targetType, roomId])
+  @@unique([deviceId, targetType, outfitId])
 }
 
 model RoomApplication {

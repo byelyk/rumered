@@ -1,24 +1,43 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { stackServerApp } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { roomApplicationSchema } from '@/lib/validations';
+import { writeFileSync, mkdirSync } from 'fs';
+import { join } from 'path';
 
 export async function POST(request: NextRequest) {
   try {
-    const user = await stackServerApp.getUser();
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
     const body = await request.json();
     const validatedData = roomApplicationSchema.parse(body);
 
+    // Create application in database
     const application = await db.roomApplication.create({
       data: {
-        userId: (user as { id: string }).id,
+        userId: 'anonymous', // Use anonymous for cookie-based system
         ...validatedData,
       },
     });
+
+    // Also save to file system for easy viewing
+    try {
+      const applicationsDir = join(process.cwd(), 'applications');
+      mkdirSync(applicationsDir, { recursive: true });
+
+      const fileName = `application_${application.id}_${Date.now()}.json`;
+      const filePath = join(applicationsDir, fileName);
+
+      const fileData = {
+        id: application.id,
+        submittedAt: new Date().toISOString(),
+        status: application.status,
+        ...validatedData,
+      };
+
+      writeFileSync(filePath, JSON.stringify(fileData, null, 2));
+      console.log(`Application saved to: ${filePath}`);
+    } catch (fileError) {
+      console.error('Error saving application to file:', fileError);
+      // Don't fail the request if file saving fails
+    }
 
     return NextResponse.json({
       message: 'Application submitted successfully',
@@ -35,21 +54,8 @@ export async function POST(request: NextRequest) {
 
 export async function GET() {
   try {
-    const user = await stackServerApp.getUser();
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const applications = await db.roomApplication.findMany({
-      where: {
-        userId: (user as { id: string }).id,
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-    });
-
-    return NextResponse.json({ applications });
+    // For anonymous system, return empty array since we don't track user applications
+    return NextResponse.json({ applications: [] });
   } catch (error) {
     console.error('Error fetching applications:', error);
     return NextResponse.json(

@@ -1,8 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
 import {
   Card,
   CardContent,
@@ -22,27 +20,12 @@ interface Stats {
 }
 
 export default function AdminDashboard() {
-  const { data: session, status } = useSession();
-  const router = useRouter();
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (status === 'loading') return; // Still loading
-
-    if (!session?.user) {
-      router.push('/login');
-      return;
-    }
-
-    const userRole = (session.user as { role?: string })?.role;
-    if (userRole !== 'ADMIN') {
-      router.push('/');
-      return;
-    }
-
     fetchStats();
-  }, [session, status, router]);
+  }, []);
 
   const fetchStats = async () => {
     try {
@@ -55,23 +38,6 @@ export default function AdminDashboard() {
       setLoading(false);
     }
   };
-
-  if (status === 'loading') {
-    return (
-      <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-violet-600 mx-auto"></div>
-            <p className="mt-4 text-gray-600">Loading...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (!session?.user || (session.user as { role?: string })?.role !== 'ADMIN') {
-    return null;
-  }
 
   if (loading) {
     return (

@@ -1,0 +1,18 @@
+{
+  "id": "sample_123",
+  "fullName": "John Doe",
+  "email": "john.doe@university.edu",
+  "phoneNumber": "+1-555-0123",
+  "hallName": "Cougar Village II",
+  "roomNumber": "512",
+  "campus": "Main Campus",
+  "school": "University of Example",
+  "academicYear": "Junior",
+  "description": "This is my amazing dorm room setup! I've created a cozy study space with LED lights, organized storage solutions, and personal touches that make it feel like home. The room has great natural lighting and I've maximized the space with creative furniture arrangements.",
+  "photoUrls": [
+    "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500",
+    "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=500"
+  ],
+  "status": "PENDING",
+  "submittedAt": "2024-01-15T10:30:00.000Z"
+}
