@@ -129,9 +129,7 @@ export default function RoomsPage() {
           <div className="text-center py-12">
             <p className="text-gray-500 text-lg">No rooms available yet.</p>
             <p className="text-gray-400 text-sm mt-2">
-              {user
-                ? 'Be the first to apply to feature your room!'
-                : 'Check back later for new submissions!'}
+              Be the first to apply to feature your room!
             </p>
           </div>
         ) : (
