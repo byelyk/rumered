@@ -11,7 +11,7 @@ export async function GET() {
 
     const votes = await db.vote.findMany({
       where: {
-        userId: user.id,
+        userId: (user as { id: string }).id,
       },
       include: {
         room: {
