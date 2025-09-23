@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useUser } from '@/lib/mock-auth';
 import { useRouter } from 'next/navigation';
 import {
   Card,
@@ -15,7 +14,6 @@ import { type RoomApplicationInput } from '@/lib/validations';
 import { sanitizeText } from '@/lib/utils';
 
 export default function RoomApplicationPage() {
-  const user = useUser();
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState<RoomApplicationInput>({
@@ -27,26 +25,6 @@ export default function RoomApplicationPage() {
     school: '',
     message: '',
   });
-
-  if (!user) {
-    return (
-      <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-2xl mx-auto">
-          <Card>
-            <CardHeader>
-              <CardTitle>Login Required</CardTitle>
-              <CardDescription>
-                You need to be logged in to submit a room application.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button onClick={() => router.push('/login')}>Go to Login</Button>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    );
-  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -77,7 +55,18 @@ export default function RoomApplicationPage() {
         throw new Error('Failed to submit application');
       }
 
-      router.push('/account?success=application-submitted');
+      alert(
+        "Application submitted successfully! We'll review it and get back to you soon."
+      );
+      setFormData({
+        fullName: '',
+        instagram: '',
+        phoneNumber: '',
+        hallName: '',
+        roomNumber: '',
+        school: '',
+        message: '',
+      });
     } catch (error) {
       console.error('Error submitting application:', error);
       alert('Failed to submit application. Please try again.');

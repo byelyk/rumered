@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   Card,
   CardContent,
@@ -29,14 +30,23 @@ interface Application {
 }
 
 export default function ApplicationsPage() {
+  const router = useRouter();
   const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedApplication, setSelectedApplication] =
     useState<Application | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    fetchApplications();
-  }, []);
+    // Check if already authenticated
+    const isAuth = localStorage.getItem('admin-authenticated') === 'true';
+    if (isAuth) {
+      setIsAuthenticated(true);
+      fetchApplications();
+    } else {
+      router.push('/admin');
+    }
+  }, [router]);
 
   const fetchApplications = async () => {
     try {
@@ -63,6 +73,19 @@ export default function ApplicationsPage() {
         return 'bg-yellow-100 text-yellow-800';
     }
   };
+
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-violet-600 mx-auto"></div>
+            <p className="mt-4 text-gray-600">Redirecting to admin login...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
