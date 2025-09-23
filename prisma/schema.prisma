@@ -111,11 +111,15 @@ model RoomApplication {
   id            String   @id @default(cuid())
   userId        String
   fullName      String             // applicant name
+  email         String?            // optional
   instagram     String?            // optional
   phoneNumber   String?            // optional
   hallName      String             // building/hall (free text by user)
   roomNumber    String?            // optional
   school        String?            // optional (UH, etc.)
+  academicYear  String?            // optional
+  description   String?            // optional room description
+  photoUrls     String[]           // array of photo URLs
   message       String?            // optional note
   status        ApplicationStatus  @default(PENDING)
   createdAt     DateTime @default(now())
