@@ -109,7 +109,7 @@ model Vote {
 
 model RoomApplication {
   id            String   @id @default(cuid())
-  userId        String
+  userId        String?  // Made optional for anonymous applications
   fullName      String             // applicant name
   email         String?            // optional
   instagram     String?            // optional
@@ -125,7 +125,7 @@ model RoomApplication {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user          User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, status])
 }

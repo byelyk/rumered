@@ -10,7 +10,6 @@ export async function POST(request: NextRequest) {
     // Create application in database
     const application = await db.roomApplication.create({
       data: {
-        userId: 'anonymous', // Use anonymous for cookie-based system
         ...validatedData,
       },
     });
