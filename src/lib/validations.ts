@@ -11,16 +11,8 @@ export const voteSchema = z.object({
 
 export const roomApplicationSchema = z.object({
   fullName: z.string().min(1).max(100),
-  email: z.string().email().optional(),
-  instagram: z.string().optional(),
-  phoneNumber: z.string().optional(),
+  instagram: z.string().min(1).max(100),
   hallName: z.string().min(1).max(100),
-  roomNumber: z.string().optional(),
-  school: z.string().optional(),
-  academicYear: z.string().optional(),
-  description: z.string().optional(),
-  photoUrls: z.array(z.string().url()).optional(),
-  message: z.string().optional(),
 });
 
 export const outfitSchema = z.object({
