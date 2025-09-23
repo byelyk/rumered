@@ -1,12 +1,29 @@
 import { z } from 'zod';
 
-export const voteSchema = z.object({
-  targetType: z.enum(['ROOM', 'OUTFIT']),
-  targetId: z.string(),
-  aestheticness: z.number().min(1).max(10),
-  cleanliness: z.number().min(1).max(10),
-  creativity: z.number().min(1).max(10),
-});
+export const voteSchema = z
+  .object({
+    targetType: z.enum(['ROOM', 'OUTFIT']),
+    roomId: z.string().optional(),
+    outfitId: z.string().optional(),
+    aestheticness: z.number().min(1).max(10),
+    cleanliness: z.number().min(1).max(10),
+    creativity: z.number().min(1).max(10),
+  })
+  .refine(
+    (data) => {
+      if (data.targetType === 'ROOM' && !data.roomId) {
+        return false;
+      }
+      if (data.targetType === 'OUTFIT' && !data.outfitId) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message:
+        'roomId is required for ROOM votes, outfitId is required for OUTFIT votes',
+    }
+  );
 
 export const roomApplicationSchema = z.object({
   fullName: z.string().min(1).max(100),
