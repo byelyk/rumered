@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
     // Check if user already voted on this target
     const existingVote = await db.vote.findFirst({
       where: {
-        userId: user.id,
+        userId: (user as { id: string }).id,
         targetType: validatedData.targetType,
         ...(validatedData.targetType === 'ROOM'
           ? { roomId: validatedData.targetId }
@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
       // Create new vote
       const newVote = await db.vote.create({
         data: {
-          userId: user.id,
+          userId: (user as { id: string }).id,
           targetType: validatedData.targetType,
           ...(validatedData.targetType === 'ROOM'
             ? { roomId: validatedData.targetId }
@@ -88,7 +88,7 @@ export async function GET(request: NextRequest) {
 
     const vote = await db.vote.findFirst({
       where: {
-        userId: user.id,
+        userId: (user as { id: string }).id,
         targetType: targetType as 'ROOM' | 'OUTFIT',
         ...(targetType === 'ROOM'
           ? { roomId: targetId }
