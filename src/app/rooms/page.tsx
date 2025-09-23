@@ -120,11 +120,9 @@ export default function RoomsPage() {
             Explore incredible dorm room setups and get decorating ideas. Vote
             on room aesthetics and creativity.
           </p>
-          {user && (
-            <Link href="/rooms/apply">
-              <Button size="lg">Apply to Feature Your Room</Button>
-            </Link>
-          )}
+          <Link href="/rooms/apply">
+            <Button size="lg">Apply to Feature Your Room</Button>
+          </Link>
         </div>
 
         {rooms.length === 0 ? (
