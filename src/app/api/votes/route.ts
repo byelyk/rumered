@@ -26,8 +26,8 @@ export async function POST(request: NextRequest) {
         deviceId: deviceId,
         targetType: validatedData.targetType,
         ...(validatedData.targetType === 'ROOM'
-          ? { roomId: validatedData.targetId }
-          : { outfitId: validatedData.targetId }),
+          ? { roomId: validatedData.roomId }
+          : { outfitId: validatedData.outfitId }),
       },
     });
 
@@ -63,8 +63,8 @@ export async function POST(request: NextRequest) {
           deviceId: deviceId,
           targetType: validatedData.targetType,
           ...(validatedData.targetType === 'ROOM'
-            ? { roomId: validatedData.targetId }
-            : { outfitId: validatedData.targetId }),
+            ? { roomId: validatedData.roomId }
+            : { outfitId: validatedData.outfitId }),
           aestheticness: validatedData.aestheticness,
           cleanliness: validatedData.cleanliness,
           creativity: validatedData.creativity,
