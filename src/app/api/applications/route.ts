@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { roomApplicationSchema } from '@/lib/validations';
-import { writeFileSync, mkdirSync } from 'fs';
-import { join } from 'path';
 
 export async function POST(request: NextRequest) {
   try {
@@ -16,28 +14,6 @@ export async function POST(request: NextRequest) {
         ...validatedData,
       },
     });
-
-    // Also save to file system for easy viewing
-    try {
-      const applicationsDir = join(process.cwd(), 'applications');
-      mkdirSync(applicationsDir, { recursive: true });
-
-      const fileName = `application_${application.id}_${Date.now()}.json`;
-      const filePath = join(applicationsDir, fileName);
-
-      const fileData = {
-        id: application.id,
-        submittedAt: new Date().toISOString(),
-        status: application.status,
-        ...validatedData,
-      };
-
-      writeFileSync(filePath, JSON.stringify(fileData, null, 2));
-      console.log(`Application saved to: ${filePath}`);
-    } catch (fileError) {
-      console.error('Error saving application to file:', fileError);
-      // Don't fail the request if file saving fails
-    }
 
     return NextResponse.json({
       message: 'Application submitted successfully',
