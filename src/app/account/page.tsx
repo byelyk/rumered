@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useUser } from '@/lib/mock-auth';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
@@ -40,7 +40,7 @@ interface Vote {
   };
 }
 
-export default function AccountPage() {
+function AccountContent() {
   const user = useUser();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -253,5 +253,24 @@ export default function AccountPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function AccountPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-violet-600 mx-auto"></div>
+              <p className="mt-4 text-gray-600">Loading account...</p>
+            </div>
+          </div>
+        </div>
+      }
+    >
+      <AccountContent />
+    </Suspense>
   );
 }
