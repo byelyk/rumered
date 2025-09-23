@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
 
     const application = await db.roomApplication.create({
       data: {
-        userId: user.id,
+        userId: (user as { id: string }).id,
         ...validatedData,
       },
     });
@@ -42,7 +42,7 @@ export async function GET() {
 
     const applications = await db.roomApplication.findMany({
       where: {
-        userId: user.id,
+        userId: (user as { id: string }).id,
       },
       orderBy: {
         createdAt: 'desc',
