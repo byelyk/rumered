@@ -24,13 +24,28 @@ export default function Home() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/fit-check">
-              <Button size="lg" className="w-full sm:w-auto">
+              <Button
+                size="lg"
+                className="w-full sm:w-auto bg-violet-600 hover:bg-violet-700"
+              >
                 Explore Fit Check
               </Button>
             </Link>
             <Link href="/rooms">
-              <Button size="lg" variant="outline" className="w-full sm:w-auto">
+              <Button
+                size="lg"
+                className="w-full sm:w-auto bg-violet-600 hover:bg-violet-700"
+              >
                 Browse Dorm Rooms
+              </Button>
+            </Link>
+            <Link href="/rooms/apply">
+              <Button
+                size="lg"
+                variant="outline"
+                className="w-full sm:w-auto border-violet-600 text-violet-600 hover:bg-violet-50"
+              >
+                Apply for Room Tour
               </Button>
             </Link>
           </div>
@@ -44,7 +59,7 @@ export default function Home() {
             How It Works
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <Card>
+            <Card className="border-violet-200 bg-gradient-to-br from-violet-50 to-white">
               <CardHeader>
                 <CardTitle className="text-violet-600">Fit Check</CardTitle>
                 <CardDescription>
@@ -61,13 +76,15 @@ export default function Home() {
                 </ul>
                 <div className="mt-6">
                   <Link href="/fit-check">
-                    <Button className="w-full">Start Voting</Button>
+                    <Button className="w-full bg-violet-600 hover:bg-violet-700">
+                      Start Voting
+                    </Button>
                   </Link>
                 </div>
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="border-violet-200 bg-gradient-to-br from-violet-50 to-white">
               <CardHeader>
                 <CardTitle className="text-violet-600">
                   Dorm Room Tours
@@ -83,9 +100,19 @@ export default function Home() {
                   <li>• Apply to feature your own room</li>
                   <li>• Find inspiration for your space</li>
                 </ul>
-                <div className="mt-6">
+                <div className="mt-6 space-y-2">
                   <Link href="/rooms">
-                    <Button className="w-full">Explore Rooms</Button>
+                    <Button className="w-full bg-violet-600 hover:bg-violet-700">
+                      Explore Rooms
+                    </Button>
+                  </Link>
+                  <Link href="/rooms/apply">
+                    <Button
+                      variant="outline"
+                      className="w-full border-violet-600 text-violet-600 hover:bg-violet-50"
+                    >
+                      Apply for Tour
+                    </Button>
                   </Link>
                 </div>
               </CardContent>
@@ -102,18 +129,23 @@ export default function Home() {
           </h2>
           <p className="text-lg text-gray-600 mb-8">
             Join thousands of college students sharing their style and room
-            setups. Create an account to start voting and submitting your own
-            content.
+            setups. Start voting and submit your own content right away!
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/register">
-              <Button size="lg" className="w-full sm:w-auto">
-                Create Account
+            <Link href="/fit-check">
+              <Button
+                size="lg"
+                className="w-full sm:w-auto bg-violet-600 hover:bg-violet-700"
+              >
+                Start Voting on Outfits
               </Button>
             </Link>
-            <Link href="/login">
-              <Button size="lg" variant="outline" className="w-full sm:w-auto">
-                Sign In
+            <Link href="/rooms">
+              <Button
+                size="lg"
+                className="w-full sm:w-auto bg-violet-600 hover:bg-violet-700"
+              >
+                Browse Room Tours
               </Button>
             </Link>
           </div>
