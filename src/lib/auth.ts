@@ -27,5 +27,10 @@ const createMockStackApp = () => ({
   role: 'USER',
 });
 
-export const stackServerApp =
-  createMockStackApp() as unknown as typeof StackServerApp;
+export const stackServerApp = createMockStackApp() as {
+  getUser: () => Promise<null>;
+  signIn: () => void;
+  signUp: () => void;
+  signOut: () => void;
+  role: string;
+};
