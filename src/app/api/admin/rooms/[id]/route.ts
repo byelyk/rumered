@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { stackServerApp } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { roomSchema } from '@/lib/validations';
 
@@ -8,11 +7,6 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const user = await stackServerApp.getUser();
-    if (!user || (user as { role?: string }).role !== 'ADMIN') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
     const { id } = await params;
     const body = await request.json();
     const validatedData = roomSchema.parse(body);
@@ -40,11 +34,6 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const user = await stackServerApp.getUser();
-    if (!user || (user as { role?: string }).role !== 'ADMIN') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
     const { id } = await params;
     await db.room.delete({
       where: { id },

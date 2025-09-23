@@ -1,15 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { stackServerApp } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { roomSchema } from '@/lib/validations';
 
 export async function GET() {
   try {
-    const user = await stackServerApp.getUser();
-    if (!user || (user as { role?: string }).role !== 'ADMIN') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
     const rooms = await db.room.findMany({
       include: {
         votes: true,
@@ -31,11 +25,6 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    const user = await stackServerApp.getUser();
-    if (!user || (user as { role?: string }).role !== 'ADMIN') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
     const body = await request.json();
     const validatedData = roomSchema.parse(body);
 
