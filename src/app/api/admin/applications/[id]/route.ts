@@ -8,7 +8,7 @@ export async function PATCH(
 ) {
   try {
     const user = await stackServerApp.getUser();
-    if (!user || user.role !== 'ADMIN') {
+    if (!user || (user as { role?: string }).role !== 'ADMIN') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 

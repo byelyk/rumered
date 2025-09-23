@@ -6,7 +6,7 @@ import { roomSchema } from '@/lib/validations';
 export async function GET() {
   try {
     const user = await stackServerApp.getUser();
-    if (!user || user.role !== 'ADMIN') {
+    if (!user || (user as { role?: string }).role !== 'ADMIN') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -32,7 +32,7 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const user = await stackServerApp.getUser();
-    if (!user || user.role !== 'ADMIN') {
+    if (!user || (user as { role?: string }).role !== 'ADMIN') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
