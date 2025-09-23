@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { voteSchema } from '@/lib/validations';
 
 // Helper function to get device ID from cookies
 function getDeviceId(request: NextRequest): string {
@@ -18,74 +17,99 @@ export async function POST(request: NextRequest) {
   try {
     const deviceId = getDeviceId(request);
     const body = await request.json();
-    const validatedData = voteSchema.parse(body);
+
+    // Simple validation - just check the basics
+    const {
+      targetType,
+      roomId,
+      outfitId,
+      aestheticness,
+      cleanliness,
+      creativity,
+    } = body;
+
+    if (!targetType || (targetType !== 'ROOM' && targetType !== 'OUTFIT')) {
+      return NextResponse.json(
+        { error: 'Invalid targetType' },
+        { status: 400 }
+      );
+    }
+
+    if (targetType === 'ROOM' && !roomId) {
+      return NextResponse.json(
+        { error: 'roomId required for ROOM votes' },
+        { status: 400 }
+      );
+    }
+
+    if (targetType === 'OUTFIT' && !outfitId) {
+      return NextResponse.json(
+        { error: 'outfitId required for OUTFIT votes' },
+        { status: 400 }
+      );
+    }
+
+    if (!aestheticness || !cleanliness || !creativity) {
+      return NextResponse.json(
+        { error: 'All scores required' },
+        { status: 400 }
+      );
+    }
 
     // Check if device already voted on this target
     const existingVote = await db.vote.findFirst({
       where: {
         deviceId: deviceId,
-        targetType: validatedData.targetType,
-        ...(validatedData.targetType === 'ROOM'
-          ? { roomId: validatedData.roomId }
-          : { outfitId: validatedData.outfitId }),
+        targetType: targetType,
+        ...(targetType === 'ROOM'
+          ? { roomId: roomId }
+          : { outfitId: outfitId }),
       },
     });
 
+    let vote;
     if (existingVote) {
       // Update existing vote
-      const updatedVote = await db.vote.update({
+      vote = await db.vote.update({
         where: { id: existingVote.id },
         data: {
-          aestheticness: validatedData.aestheticness,
-          cleanliness: validatedData.cleanliness,
-          creativity: validatedData.creativity,
+          aestheticness: Number(aestheticness),
+          cleanliness: Number(cleanliness),
+          creativity: Number(creativity),
         },
       });
-
-      const response = NextResponse.json({
-        message: 'Vote updated successfully',
-        vote: updatedVote,
-      });
-
-      // Set device ID cookie
-      response.cookies.set('device-id', deviceId, {
-        maxAge: 60 * 60 * 24 * 365, // 1 year
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-      });
-
-      return response;
     } else {
       // Create new vote
-      const newVote = await db.vote.create({
+      vote = await db.vote.create({
         data: {
           deviceId: deviceId,
-          targetType: validatedData.targetType,
-          ...(validatedData.targetType === 'ROOM'
-            ? { roomId: validatedData.roomId }
-            : { outfitId: validatedData.outfitId }),
-          aestheticness: validatedData.aestheticness,
-          cleanliness: validatedData.cleanliness,
-          creativity: validatedData.creativity,
+          targetType: targetType,
+          ...(targetType === 'ROOM'
+            ? { roomId: roomId }
+            : { outfitId: outfitId }),
+          aestheticness: Number(aestheticness),
+          cleanliness: Number(cleanliness),
+          creativity: Number(creativity),
         },
       });
-
-      const response = NextResponse.json({
-        message: 'Vote submitted successfully',
-        vote: newVote,
-      });
-
-      // Set device ID cookie
-      response.cookies.set('device-id', deviceId, {
-        maxAge: 60 * 60 * 24 * 365, // 1 year
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-      });
-
-      return response;
     }
+
+    const response = NextResponse.json({
+      message: existingVote
+        ? 'Vote updated successfully'
+        : 'Vote submitted successfully',
+      vote: vote,
+    });
+
+    // Set device ID cookie
+    response.cookies.set('device-id', deviceId, {
+      maxAge: 60 * 60 * 24 * 365, // 1 year
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+    });
+
+    return response;
   } catch (error) {
     console.error('Error processing vote:', error);
     return NextResponse.json(
