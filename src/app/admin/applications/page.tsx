@@ -133,7 +133,9 @@ export default function AdminApplicationsPage() {
       const sanitizedData = {
         ...roomFormData,
         displayName: sanitizeText(roomFormData.displayName),
-        hallName: sanitizeText(roomFormData.hallName),
+        hallName: roomFormData.hallName
+          ? sanitizeText(roomFormData.hallName)
+          : '',
         roomNumber: roomFormData.roomNumber
           ? sanitizeText(roomFormData.roomNumber)
           : undefined,
