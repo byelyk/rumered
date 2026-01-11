@@ -3,6 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="RUMERED - The ultimate dorm tour platform. Explore stunning college dorm transformations, vote on the best setups, and get inspired for your own space.">
+    <meta name="keywords" content="dorm tour, college dorms, dorm room ideas, dorm transformation, college life, dorm inspiration">
+    <meta name="author" content="elyk">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://rumered.com/">
+    <meta property="og:title" content="RUMERED - Dorm Tour Platform">
+    <meta property="og:description" content="Explore stunning college dorm transformations, vote on the best setups, and get inspired for your own space.">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://rumered.com/">
+    <meta property="twitter:title" content="RUMERED - Dorm Tour Platform">
+    <meta property="twitter:description" content="Explore stunning college dorm transformations, vote on the best setups, and get inspired for your own space.">
+    
     <title>RUMERED - Dorm Tour Platform</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -81,13 +97,13 @@
             position: absolute;
             top: 50%;
             left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
             transform: translate(-50%, -50%);
-            width: 100vw;
-            height: 56.25vw;
-            min-height: 100vh;
-            min-width: 177.77vh;
-            pointer-events: none;
             filter: brightness(0.4) contrast(1.1);
+            pointer-events: none;
         }
 
         .hero-title {
@@ -622,7 +638,10 @@
 
     <!-- Hero Section -->
     <section class="hero-container">
+        <!-- Background Video -->
         <iframe class="video-bg" src="https://www.youtube.com/embed/RHR7UXIBiVs?autoplay=1&mute=1&loop=1&playlist=RHR7UXIBiVs&controls=0&showinfo=0&rel=0&playsinline=1&modestbranding=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        <!-- Fallback gradient background -->
+        <div style="position: absolute; inset: 0; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); opacity: 0.3;"></div>
         <div style="position: relative; z-index: 10; text-align: center;">
             <h1 class="hero-title">RUMERED</h1>
             <p class="hero-subtitle">by elyk</p>
